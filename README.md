@@ -6,14 +6,15 @@ A modern full-stack web application built using **React + Firebase** to report, 
 
 ## 🚀 Live Demo
 
-🌐 https://smart-water-monitoring-system-six.vercel.app
+🌐 https://smart-water-monitoring-system-git-main-g-varuns-projects.vercel.app
 
 ---
 
 ## 📌 Overview
 
-The **Smart Water Monitoring System** enables users to report water issues such as leakage, contamination, or supply problems.
-An admin can verify and resolve issues, ensuring faster response and better public health management.
+The **Smart Water Monitoring System** allows users to report water-related issues such as leakage, contamination, or supply problems.
+
+An admin can verify and resolve issues, ensuring faster response and improved public health.
 
 ---
 
@@ -21,17 +22,17 @@ An admin can verify and resolve issues, ensuring faster response and better publ
 
 ### 👤 User Features
 
-* 🔐 Google Authentication (Firebase)
-* 📝 Submit water-related issues
-* 📍 Add location, issue type, and description
+* 🔐 Google Authentication
+* 📝 Submit water issues
+* 📍 Add location, type, and description
 * 📊 View real-time reports
-* 🔔 Get status updates (Reported → Verified → Resolved)
+* 🔔 Track status updates (Reported → Verified → Resolved)
 
 ### 👑 Admin Features
 
-* ✅ Verify reported issues
+* ✅ Verify reports
 * 🛠️ Mark issues as resolved
-* 🔄 Real-time status updates for users
+* 🔄 Real-time updates for users
 
 ---
 
@@ -39,9 +40,9 @@ An admin can verify and resolve issues, ensuring faster response and better publ
 
 * ✨ Glassmorphism design
 * 🌈 Animated gradient background
-* 🌀 Smooth transitions & hover effects
-* 💡 Interactive status badges
-* 🎯 Responsive design
+* 🌀 Smooth animations & transitions
+* 💡 Status badges with colors
+* 📱 Fully responsive
 
 ---
 
@@ -56,7 +57,7 @@ An admin can verify and resolve issues, ensuring faster response and better publ
 **Backend**
 
 * Firebase Authentication
-* Firebase Firestore (Realtime Database)
+* Firebase Firestore
 
 **Deployment**
 
@@ -66,18 +67,18 @@ An admin can verify and resolve issues, ensuring faster response and better publ
 
 ## ⚙️ How It Works
 
-1. User logs in using Google
-2. Submits a water issue report
-3. Data is stored in Firebase Firestore
-4. Admin verifies the issue
-5. Admin marks it as resolved
-6. User gets updated status instantly
+1. User logs in with Google
+2. Submits a water issue
+3. Data stored in Firebase
+4. Admin verifies issue
+5. Admin resolves issue
+6. User sees updated status
 
 ---
 
 ## 🔐 Environment Variables
 
-Create a `.env` file in the root directory and add:
+Create a `.env` file:
 
 ```
 VITE_FIREBASE_API_KEY=your_api_key
@@ -94,7 +95,7 @@ VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/your-username/smart-water-monitoring-system.git
+git clone https://github.com/varung-coder/smart-water-monitoring-system.git
 cd smart-water-monitoring-system
 npm install
 npm run dev
@@ -110,17 +111,18 @@ npm run build
 
 ---
 
-## 🌍 Deployment
-
-Deployed using **Vercel** for fast and scalable hosting.
-
----
-
 ## 🎯 Objective
 
-To provide a simple and efficient platform for reporting and resolving water-related issues, contributing to improved sanitation and public health.
+To create a simple platform for reporting and resolving water issues, helping improve sanitation and public health.
 
 ---
- ❤️ Built for FOC Project Purpose
+
+## 👨‍💻 Author
+
+**G Varun**
 
 ---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
