@@ -116,13 +116,10 @@ npm run build
 To create a simple platform for reporting and resolving water issues, helping improve sanitation and public health.
 
 ---
+## LICENSE ##
+This is built for the FOC Micro Project ❤️
 
-## 👨‍💻 Author
 
-**G Varun**
 
----
-
-## ⭐ Support
 
 If you like this project, give it a ⭐ on GitHub!
