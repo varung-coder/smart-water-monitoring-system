@@ -6,7 +6,7 @@ A modern full-stack web application built using **React + Firebase** to report, 
 
 ## 🚀 Live Demo
 
-🌐 https://smart-water-monitoring-system-git-main-g-varuns-projects.vercel.app
+🌐 https://smart-water-monitoring-system-six.vercel.app/
 
 ---
 
