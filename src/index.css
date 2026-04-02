@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Restore cursors for interactive elements */
 a, button, select, [role="button"] { cursor: none; }
