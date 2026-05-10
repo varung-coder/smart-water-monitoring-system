@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { db } from '../firebase';
+import React, { useState, useRef } from 'react';
+import { db, storage } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { Send, MapPin, FileText, AlertCircle, ChevronDown } from 'lucide-react';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { Send, MapPin, FileText, AlertCircle, ChevronDown, ImagePlus, X } from 'lucide-react';
 import Toast from './Toast';
 
 const ISSUE_TYPES = [
@@ -17,7 +18,57 @@ function ReportForm({ user }) {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
+  // Image upload state
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef(null);
+
   const showToast = (message, type = 'success') => setToast({ message, type });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowed.includes(file.type)) {
+      showToast('Only JPG, JPEG, and PNG files are allowed.', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setUploadProgress(0);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const uploadImage = (file) => {
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, `report-images/${Date.now()}_${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setUploadProgress(progress);
+        },
+        (error) => reject(error),
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
+        }
+      );
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,6 +76,11 @@ function ReportForm({ user }) {
 
     setLoading(true);
     try {
+      let imageUrl = '';
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
       await addDoc(collection(db, 'reports'), {
         ...formData,
         location: formData.location.trim(),
@@ -32,16 +88,20 @@ function ReportForm({ user }) {
         userName: user.displayName,
         userEmail: user.email,
         userPhoto: user.photoURL || '',
+        imageUrl,
         timestamp: serverTimestamp(),
         status: 'Reported',
       });
+
       setFormData({ location: '', issueType: 'contamination', description: '' });
+      removeImage();
       showToast('Report submitted successfully!', 'success');
     } catch (error) {
       console.error('Error adding document:', error);
       showToast('Failed to submit report. Please try again.', 'error');
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -118,6 +178,67 @@ function ReportForm({ user }) {
             />
           </div>
 
+          {/* Image Upload */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+              <ImagePlus className="h-3.5 w-3.5 text-cyan-400" /> Upload Image <span className="text-gray-500 normal-case font-normal">(optional)</span>
+            </label>
+
+            {!imagePreview ? (
+              <label
+                htmlFor="report-image-upload"
+                className="flex flex-col items-center justify-center w-full h-28 rounded-xl border-2 border-dashed border-white/20 bg-white/5 hover:bg-white/10 hover:border-cyan-500/50 cursor-pointer transition-all duration-200 gap-2"
+              >
+                <ImagePlus className="h-6 w-6 text-cyan-400/70" />
+                <span className="text-xs text-gray-400">Click to upload <span className="text-cyan-400 font-medium">JPG, JPEG, PNG</span></span>
+                <input
+                  id="report-image-upload"
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            ) : (
+              <div className="relative rounded-xl overflow-hidden border border-white/15 bg-black/20">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full max-h-52 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 flex items-center justify-center w-7 h-7 rounded-full bg-black/60 hover:bg-red-500/80 text-white border border-white/20 transition-all duration-200"
+                  title="Remove image"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+                <div className="px-3 py-1.5 text-xs text-gray-400 flex items-center gap-1.5">
+                  <ImagePlus className="h-3 w-3 text-cyan-400" />
+                  <span className="truncate max-w-[200px]">{imageFile?.name}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Upload progress bar */}
+            {loading && imageFile && uploadProgress > 0 && (
+              <div className="mt-2">
+                <div className="flex justify-between text-xs text-gray-400 mb-1">
+                  <span>Uploading image…</span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Submit */}
           <button
             type="submit"
@@ -130,7 +251,7 @@ function ReportForm({ user }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                 </svg>
-                Submitting...
+                Submitting…
               </>
             ) : (
               <>

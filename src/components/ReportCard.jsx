@@ -84,6 +84,19 @@ function ReportCard({ report, userEmail }) {
         {report.description}
       </p>
 
+      {/* Uploaded Image */}
+      {report.imageUrl && (
+        <div className="mb-3 rounded-xl overflow-hidden border border-white/10">
+          <a href={report.imageUrl} target="_blank" rel="noopener noreferrer" title="View full image">
+            <img
+              src={report.imageUrl}
+              alt="Report attachment"
+              className="w-full max-h-52 object-cover hover:opacity-90 transition-opacity duration-200"
+            />
+          </a>
+        </div>
+      )}
+
       {/* Footer */}
       <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-white/8">
         <div className="flex items-center gap-1">
